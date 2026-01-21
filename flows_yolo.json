@@ -1,0 +1,462 @@
+[
+    {
+        "id": "03aca11ebf02c7fe",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "e01009b3f3609636",
+        "type": "exec",
+        "z": "03aca11ebf02c7fe",
+        "command": "bash stream.sh",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "true",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "IP Cam - KIRI",
+        "x": 300,
+        "y": 120,
+        "wires": [
+            [
+                "38438521442fd5fc"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "df3790708ff161f2",
+        "type": "ui_template",
+        "z": "03aca11ebf02c7fe",
+        "group": "2c062af2e8f4f3cc",
+        "name": "CAM KIRI",
+        "order": 1,
+        "width": 8,
+        "height": 6,
+        "format": "<body>\n<center>\n<!-- <h3>TEST</h3><br>    -->\n    <div ng-bind-html=\"msg.payload\"></div>\n</center>\n</body>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1100,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4ea70c9bacf9dccf",
+        "type": "inject",
+        "z": "03aca11ebf02c7fe",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 120,
+        "wires": [
+            [
+                "e01009b3f3609636"
+            ]
+        ]
+    },
+    {
+        "id": "587b90153151eead",
+        "type": "file in",
+        "z": "03aca11ebf02c7fe",
+        "name": "read jpg",
+        "filename": "/home/pi/deepface/output_1.jpg",
+        "filenameType": "str",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 680,
+        "y": 100,
+        "wires": [
+            [
+                "5438b1799524b7c6"
+            ]
+        ]
+    },
+    {
+        "id": "5438b1799524b7c6",
+        "type": "base64",
+        "z": "03aca11ebf02c7fe",
+        "name": "",
+        "action": "",
+        "property": "payload",
+        "x": 820,
+        "y": 100,
+        "wires": [
+            [
+                "dfaf43fba77874ab"
+            ]
+        ]
+    },
+    {
+        "id": "dfaf43fba77874ab",
+        "type": "template",
+        "z": "03aca11ebf02c7fe",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<img width=\"320px\" height=\"200px\" src=\"data:image/jpg;base64,{{{payload}}}\">",
+        "output": "str",
+        "x": 960,
+        "y": 100,
+        "wires": [
+            [
+                "df3790708ff161f2"
+            ]
+        ]
+    },
+    {
+        "id": "683973b905f7ac89",
+        "type": "status",
+        "z": "03aca11ebf02c7fe",
+        "name": "status cctv kanan",
+        "scope": [
+            "e01009b3f3609636"
+        ],
+        "x": 100,
+        "y": 480,
+        "wires": [
+            [
+                "4fadcc21c8102f54"
+            ]
+        ]
+    },
+    {
+        "id": "4fadcc21c8102f54",
+        "type": "function",
+        "z": "03aca11ebf02c7fe",
+        "name": "get pid cctv depan",
+        "func": "if(msg.status.text){\n    if(msg.status.text.match(/pid/g)){\n        let piddepan = msg.status.text.split(':');\n        msg.payload = piddepan[1];\n        node.status({ fill: \"blue\", shape: \"ring\", text: \"PID: \" + msg.payload });\n        return msg;\n    } else {\n        msg.payload = false;\n        node.status({ fill: \"red\", shape: \"ring\", text: \"PID: \" + msg.payload });\n        return msg;\n    }\n} else {\n    msg.payload = false;\n    node.status({ fill: \"red\", shape: \"ring\", text: \"PID: \" + msg.payload });\n    return msg;\n}",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 480,
+        "wires": [
+            [
+                "0a84ccfcd22d10c9"
+            ]
+        ]
+    },
+    {
+        "id": "0a84ccfcd22d10c9",
+        "type": "change",
+        "z": "03aca11ebf02c7fe",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "pid1",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 530,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "770b0cd2d32819ec",
+        "type": "inject",
+        "z": "03aca11ebf02c7fe",
+        "name": "KILL PID DEPAN",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 540,
+        "wires": [
+            [
+                "2db814e6c328d955"
+            ]
+        ]
+    },
+    {
+        "id": "2db814e6c328d955",
+        "type": "change",
+        "z": "03aca11ebf02c7fe",
+        "name": "set to pid & move second command",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "pid1",
+                "tot": "flow"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 540,
+        "wires": [
+            [
+                "46dba952baf2d2ea"
+            ]
+        ]
+    },
+    {
+        "id": "46dba952baf2d2ea",
+        "type": "exec",
+        "z": "03aca11ebf02c7fe",
+        "command": "sudo kill",
+        "addpay": "payload",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 690,
+        "y": 540,
+        "wires": [
+            [
+                "876b6b0f717ff141"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "876b6b0f717ff141",
+        "type": "change",
+        "z": "03aca11ebf02c7fe",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "",
+                "tot": "date"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 980,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "34c05876bdf1c9b3",
+        "type": "comment",
+        "z": "03aca11ebf02c7fe",
+        "name": "IP-CAM",
+        "info": "",
+        "x": 90,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "38438521442fd5fc",
+        "type": "trigger",
+        "z": "03aca11ebf02c7fe",
+        "name": "",
+        "op1": "",
+        "op2": "",
+        "op1type": "nul",
+        "op2type": "date",
+        "duration": "250",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "ms",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 500,
+        "y": 100,
+        "wires": [
+            [
+                "587b90153151eead",
+                "c8570bd2b3e362b6"
+            ]
+        ]
+    },
+    {
+        "id": "c8570bd2b3e362b6",
+        "type": "file in",
+        "z": "03aca11ebf02c7fe",
+        "name": "read.jpg",
+        "filename": "/home/pi/deepface/output_2.jpg",
+        "filenameType": "str",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 680,
+        "y": 180,
+        "wires": [
+            [
+                "16414e86e8b6fd5a"
+            ]
+        ]
+    },
+    {
+        "id": "16414e86e8b6fd5a",
+        "type": "base64",
+        "z": "03aca11ebf02c7fe",
+        "name": "",
+        "action": "",
+        "property": "payload",
+        "x": 820,
+        "y": 180,
+        "wires": [
+            [
+                "add66e4b2084e2a5"
+            ]
+        ]
+    },
+    {
+        "id": "add66e4b2084e2a5",
+        "type": "template",
+        "z": "03aca11ebf02c7fe",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<img width=\"320px\" height=\"200px\" src=\"data:image/jpg;base64,{{{payload}}}\">",
+        "output": "str",
+        "x": 960,
+        "y": 180,
+        "wires": [
+            [
+                "6b0e5ff36176e48d"
+            ]
+        ]
+    },
+    {
+        "id": "6b0e5ff36176e48d",
+        "type": "ui_template",
+        "z": "03aca11ebf02c7fe",
+        "group": "fe8a04c6c6a4829c",
+        "name": "CAM KANAN",
+        "order": 1,
+        "width": 8,
+        "height": 6,
+        "format": "<body>\n<center>\n<!-- <h3>TEST</h3><br>    -->\n    <div ng-bind-html=\"msg.payload\"></div>\n</center>\n</body>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1110,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0b87a4f8a14cb5ce",
+        "type": "ui_spacer",
+        "z": "03aca11ebf02c7fe",
+        "name": "spacer",
+        "group": "2c062af2e8f4f3cc",
+        "order": 2,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "4fd1f5ba2cebe907",
+        "type": "ui_spacer",
+        "z": "03aca11ebf02c7fe",
+        "name": "spacer",
+        "group": "2c062af2e8f4f3cc",
+        "order": 4,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "2c062af2e8f4f3cc",
+        "type": "ui_group",
+        "name": "CAM_KIRI",
+        "tab": "34db53d25ee5fb47",
+        "order": 1,
+        "disp": true,
+        "width": 8,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "fe8a04c6c6a4829c",
+        "type": "ui_group",
+        "name": "CAM_KANAN",
+        "tab": "34db53d25ee5fb47",
+        "order": 2,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "34db53d25ee5fb47",
+        "type": "ui_tab",
+        "name": "CCTV - Camera Server ",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]
